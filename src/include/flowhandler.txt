@@ -1,0 +1,29 @@
+#ifndef _FLOW_HANDLER_H
+#define _FLOW_HANDLER_H
+
+#include "Elevator.h"
+#include <boost/beast/websocket.hpp>
+#include <boost/beast.hpp>
+#include <boost/asio.hpp>
+#include <vector>
+#include <memory>
+
+using tcp = boost::asio::ip::tcp;
+
+class FlowHandler
+{
+private:
+    Elevator *HandleFloorButtonInput(int level);
+    Elevator *HandleElevatorButtonInput(int level);
+    void Read();
+    void Write(Elevator *elevator);
+    std::vector<Elevator> elevators;
+    std::shared_ptr<Elevator> lastMovedElevator;
+    boost::beast::websocket::stream<tcp::socket> ws;
+
+public:
+    FlowHandler(Elevator elevator1, Elevator elevator2, boost::beast::websocket::stream<tcp::socket> ws);
+    void Start();
+};
+
+#endif

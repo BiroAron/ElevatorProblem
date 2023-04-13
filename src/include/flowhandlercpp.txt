@@ -1,0 +1,133 @@
+#include "include/FlowHandler.h"
+#include "include/Elevator.h"
+#include <iostream>
+#include <vector>
+#include <memory>
+
+FlowHandler::FlowHandler(Elevator elevator1, Elevator elevator2, boost::beast::websocket::stream<tcp::socket> _ws)
+    : elevators({elevator1, elevator2}), lastMovedElevator(std::make_shared<Elevator>(elevator1)), ws(std::move(_ws))
+{
+}
+
+Elevator *FlowHandler::HandleFloorButtonInput(int level)
+{
+    int elevatorOneDistance = elevators[0].GetDistance(level), elevatorTwoDistance = elevators[1].GetDistance(level);
+
+    if (elevatorOneDistance + elevatorTwoDistance == 0)
+    {
+        if (elevatorOneDistance == 0 || elevatorOneDistance < elevatorTwoDistance)
+        {
+            std::cout << std::endl;
+            std::cout << "Elevator 1 currentlevel " << elevators[0].GetCurrentLevel() << std::endl;
+            std::cout << "Elevator 2 currenlevel" << elevators[1].GetCurrentLevel() << std::endl;
+            std::cout << "level" << level << std::endl;
+            std::cout << "first elevator distance: " << elevatorOneDistance << std::endl;
+            std::cout << "second elevator disatnce: " << elevatorTwoDistance << std::endl;
+            elevators[0].SetCurrentLevel(level);
+            std::cout << "fasszopas1" << std::endl;
+            return &elevators[0];
+        }
+        else
+        {
+            std::cout << std::endl;
+            std::cout << "Elevator 1 currentlevel " << elevators[0].GetCurrentLevel() << std::endl;
+            std::cout << "Elevator 2 currenlevel" << elevators[1].GetCurrentLevel() << std::endl;
+            std::cout << "level" << level << std::endl;
+            std::cout << "first elevator distance: " << elevatorOneDistance << std::endl;
+            std::cout << "second elevator disatnce: " << elevatorTwoDistance << std::endl;
+            elevators[1].SetCurrentLevel(level);
+            std::cout << "fasszopas2" << std::endl;
+
+            return &elevators[1];
+        }
+    }
+
+    elevatorOneDistance = std::abs(elevatorOneDistance);
+    elevatorTwoDistance = std::abs(elevatorTwoDistance);
+
+    if (elevatorTwoDistance < elevatorOneDistance)
+    {
+        std::cout << std::endl;
+        std::cout << "Elevator 1 currentlevel " << elevators[0].GetCurrentLevel() << std::endl;
+        std::cout << "Elevator 2 currenlevel" << elevators[1].GetCurrentLevel() << std::endl;
+        std::cout << "level" << level << std::endl;
+        std::cout << "first elevator distance: " << elevatorOneDistance << std::endl;
+        std::cout << "second elevator disatnce: " << elevatorTwoDistance << std::endl;
+        elevators[1].SetCurrentLevel(level);
+        std::cout << "fasszopas3" << std::endl;
+
+        return &elevators[1];
+    }
+    else
+    {
+        std::cout << std::endl;
+        std::cout << "Elevator 1 currentlevel " << elevators[0].GetCurrentLevel() << std::endl;
+        std::cout << "Elevator 2 currenlevel" << elevators[1].GetCurrentLevel() << std::endl;
+        std::cout << "level" << level << std::endl;
+        std::cout << "first elevator distance: " << elevatorOneDistance << std::endl;
+        std::cout << "second elevator disatnce: " << elevatorTwoDistance << std::endl;
+        elevators[0].SetCurrentLevel(level);
+        std::cout << "fasszopas4" << std::endl;
+
+        return &elevators[0];
+    }
+}
+
+Elevator *FlowHandler::HandleElevatorButtonInput(int level)
+{
+    std::cout << std::endl;
+    std::cout << "ID " << lastMovedElevator->GetId() << std::endl;
+    std::cout << "current level" << lastMovedElevator->GetCurrentLevel() << std::endl;
+    std::cout << "level" << level << std::endl;
+    std::cout << "distance: " << lastMovedElevator->GetDistance(level) << std::endl;
+    lastMovedElevator->SetCurrentLevel(level);
+    std::cout << "fasszopas5" << std::endl;
+    return lastMovedElevator.get();
+}
+
+void FlowHandler::Read()
+{
+    while (true)
+    {
+        std::vector<char> buffer(2);
+        ws.read_some(boost::asio::buffer(buffer));
+        std::string data(buffer.data(), 2);
+        int level = std::stoi(data);
+
+        if (level < 7 && level >= 0)
+            Write(HandleFloorButtonInput(level));
+        else
+        {
+            std::cout << level << std::endl;
+
+            level = level % 10;
+            std::cout << level << std::endl;
+            Write(HandleElevatorButtonInput(level));
+        }
+        buffer.clear();
+    }
+}
+
+void FlowHandler::Write(Elevator *elevator)
+{
+    lastMovedElevator = std::make_shared<Elevator>(*elevator);
+    int elevatorLvl = elevator->GetCurrentLevel();
+    if (elevatorLvl >= 10)
+        elevatorLvl -= 10;
+
+    ws.write(boost::asio::buffer(std::to_string((elevator->GetId() * 10) + elevatorLvl)));
+}
+
+void FlowHandler::Start()
+{
+    try
+    {
+        ws.accept();
+        while (true)
+            Read();
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+}

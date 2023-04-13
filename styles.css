@@ -1,0 +1,133 @@
+body {
+    /* font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 5%;
+    padding-left: 10%;
+    background-color: rgb(255, 244, 231);
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 80% 10% 10%;
+    background-color: #2196F3;
+    padding: 10px;
+    width: 97%;
+    box-shadow: 6px 6px rgba(53, 53, 53, 0.84);
+    border-radius: 6px;
+}
+
+.grid-item {
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 3%;
+    font-size: 30px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grid-item button {
+    float: right;
+    /* margin: 1%; */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background-color: #21f37e;
+    justify-self: right;
+
+}
+
+.grid-item:nth-child(1),
+.button-holder:nth-child(1) {
+    border-top-left-radius: 6px;
+}
+
+.grid-item:nth-child(3),
+.button-holder:nth-child(2) {
+    border-top-right-radius: 6px;
+}
+
+.grid-item:nth-child(21),
+.button-holder:nth-child(7) {
+    border-bottom-right-radius: 6px;
+}
+
+.grid-item:nth-child(19),
+.button-holder:nth-child(7) {
+    border-bottom-left-radius: 6px;
+}
+
+.control-panel {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.5s, opacity 0.5s linear;
+    display: grid;
+    grid-template-areas:
+        "a b"
+        "c d"
+        "e f"
+        "g g";
+    gap: 10px;
+    background-color: #2196F3;
+    padding: 10px;
+    height: 70%;
+    width: 20%;
+    align-self: center;
+    justify-self: center;
+    box-shadow: 6px 6px rgba(53, 53, 53, 0.84);
+    border-radius: 6px;
+}
+
+.button-holder {
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.7);
+    align-items: center;
+    justify-content: center;
+}
+
+#cp-item0 {
+    grid-area: g;
+}
+
+#cp-item1 {
+    grid-area: e;
+}
+
+#cp-item2 {
+    grid-area: f;
+}
+
+#cp-item3 {
+    grid-area: c;
+}
+
+#cp-item4 {
+    grid-area: d;
+}
+
+#cp-item5 {
+    grid-area: a;
+}
+
+#cp-item6 {
+    grid-area: b;
+}
+
+.button-holder button {
+    float: right;
+    border-radius: 50%;
+    font-size: 25px;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    background-color: #21f37e;
+    justify-self: right;
+
+}
+
+button:hover {
+    background-color: #1ed570;
+    transition: 0.3s;
+}

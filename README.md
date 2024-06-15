@@ -11,4 +11,4 @@ A programot úgy kell elindítani hogy, az előre elkészített runnable file-t 
 1. WSL istalláció: https://learn.microsoft.com/en-us/windows/wsl/install
 2. Ubuntu istalláció: https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview
 3. Boost installáció https://www.geeksforgeeks.org/how-to-install-boost-library-in-cpp-on-linux/
-4. C++ Compilerc installáció <sudo apt-get install g++> 
+4. C++ Compiler installáció <sudo apt-get install g++> 
